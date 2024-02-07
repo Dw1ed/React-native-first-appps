@@ -1,56 +1,44 @@
 import React from 'react';
-import {
-  Text,
-  SafeAreaView,
-  StyleSheet,
-  TextInput,
-  FlatList,
-} from 'react-native';
-import pati_data from './components/patistore.json';
-import Products from './components/Products';
+import {useState} from 'react';
+import {FlatList, SafeAreaView, View, StyleSheet} from 'react-native';
+import music_data from './music-data.json';
+import SongCard from './Components/Card/Card';
+import SearchBar from './Components/SearchBar';
+function App() {
+  const [list, setList] = useState(music_data);
+  const renderSong = ({item}) => <SongCard song={item} />;
+  const renderSeperator = () => <View style={styles.seperator} />;
+  const handleSearch = text => {
+    const filteredList = music_data.filter(song => {
+      const searcedText = text.toLowerCase();
+      const currentTitle = song.title.toLowerCase();
 
-const App = () => {
-  const [text, onChangeText] = React.useState('Ara.. ');
-  const renderPati = ({item}) => <Products pati={item} />;
+      return currentTitle.indexOf(searcedText) > -1;
+    });
+
+    setList(filteredList);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headerText}>PATIKASTORE</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeText}
-        value={text}
-      />
-      <FlatList
-        keyExtractor={item => item.id.toString()}
-        data={pati_data}
-        renderItem={renderPati}
-        numColumns={2}
-      />
+      <SearchBar onSearch={handleSearch} />
+      <View style={styles.container}>
+        <FlatList
+          keyExtractor={item => item.id}
+          data={list}
+          renderItem={renderSong}
+          ItemSeparatorComponent={renderSeperator}
+        />
+      </View>
     </SafeAreaView>
   );
-};
+}
+export default App;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    marginTop: 50,
-  },
-  headerText: {
-    fontWeight: 'bold',
-    fontSize: 30,
-    color: '#cd5c5c',
-    padding: 5,
-  },
-  input: {
-    height: 40,
-    margin: 10,
-    backgroundColor: '#f8f8ff',
-    color: '#dcdcdc',
-    padding: 10,
-    borderRadius: 5,
+  container: {flex: 1},
+  seperator: {
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
 });
-
-export default App;
